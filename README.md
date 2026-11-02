@@ -5,6 +5,11 @@ This repository is a fresh snapshot of the latest working files, not a copy
 of the 2024 Git history. Private credentials are excluded, and the street
 address and neighbors' names are anonymized in this public copy.
 
+**Season closed:** the Azure backend and dedicated Entra application were
+removed on November 2, 2026. The code is preserved for reuse, but cloud speech
+and conversation require new Azure resources and credentials. Local GPIO
+effect controls remain independent of Azure.
+
 ![alt text](image.png)
 
 Chuckles is a Raspberry Pi talking Halloween prop. The speech process controls
@@ -307,39 +312,37 @@ output. No custom voice or custom speech endpoint is needed.
   voices (offline, no per-request fee, usually less expressive; check each
   voice's license). Neither is wired into this script.
 
-## Configured Azure services
+## Retired 2026 Azure services
 
-The Chuckles services are in subscription
-`ccde4e1a-2fbf-40b0-8dc9-1793d4f99c25`, resource group `rg-chuckles`, East US:
+The 2026 backend used a dedicated `rg-chuckles` resource group in East US.
+On November 2, 2026, the resource group, both services, and the dedicated
+`chuckles-pi` Entra application/service principal were deleted. The
+application credential is no longer usable. This public repository contains
+neither private credentials nor a running cloud backend.
 
-| Service | Resource / deployment |
+| Former service | Configuration |
 | --- | --- |
-| Azure OpenAI | `chuckles-openai-ccde4e1a` |
+| Azure OpenAI | Dedicated OpenAI resource |
 | Chat deployment | `chuckles-chat`, `gpt-4.1-mini` version `2025-04-14`, Global Standard |
-| Azure Speech | `chuckles-speech-ccde4e1a`, Standard S0 |
+| Azure Speech | Dedicated Speech resource, Standard S0 |
 
 These are usage-billed services, not reserved/provisioned throughput. Global
 Standard inference can be processed outside the resource's region. As checked
 on October 24, 2026, the model catalog lists `gpt-4.1-mini` as Legacy with an
 inference retirement date of April 14, 2027; plan a compatible model update.
 
-The private `.env` beside the speech script contains the real endpoints and an
-unattended Microsoft Entra application credential (`AZURE_AUTH_MODE=entra`).
-The identity has only **Cognitive Services OpenAI User** on the Chuckles OpenAI
-resource and **Cognitive Services Speech User** on the Chuckles Speech resource.
-Resource API-key authentication remains disabled. No Azure CLI installation or
-interactive Azure login is required on the Pi.
+The deployment used unattended Microsoft Entra authentication
+(`AZURE_AUTH_MODE=entra`) with **Cognitive Services OpenAI User** on its OpenAI
+resource and **Cognitive Services Speech User** on its Speech resource.
+Resource API-key authentication was disabled. Recreate an identity and its
+resource-scoped roles if reusing this authentication mode; old endpoints and
+credentials must not be reused.
 
-The application ID is `fb53cd38-622a-4714-96bf-05de559cd4ae`. Its credential
-expires on **October 24, 2027**. Rotate it before then in Microsoft Entra ID app
-registrations and update `AZURE_CLIENT_SECRET` in the Pi's private `.env`.
-The SDKs refresh short-lived access tokens automatically while Chuckles runs;
-this does not renew the application's expiring credential.
-
-It is Git-ignored: transfer it separately and securely to the Pi, keep it private,
-and run `chmod 600 .env` there. Do not overwrite it with the example or commit it.
-The private configuration has GPIO enabled (`GPIO_ENABLED=true`) for the rocking
-relay. Verify `GPIO_CHIP` and `ROCK_PIN` against the Pi and wiring before starting.
+Create a new private `.env` beside the speech script when setting up a future
+deployment. It is Git-ignored: transfer it separately and securely to the Pi,
+keep it private, and run `chmod 600 .env` there. Do not commit credentials.
+GPIO defaults to enabled (`GPIO_ENABLED=true`) for the rocking relay.
+Verify `GPIO_CHIP` and `ROCK_PIN` against the Pi and wiring before starting.
 Set `GPIO_ENABLED=false` for audio-only testing.
 
 The script loads that adjacent file automatically, regardless of the working
