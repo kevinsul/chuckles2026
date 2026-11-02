@@ -1,0 +1,4 @@
+azure-cognitiveservices-speech>=1.53,<2
+azure-identity>=1.17,<2
+openai>=1.30,<3
+python-dotenv>=1,<2

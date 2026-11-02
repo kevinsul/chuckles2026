@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chuckles the Clown</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 24px 16px;
+            text-align: center;
+            background-color: black;
+            color: #ff6666;
+            font-family: system-ui, sans-serif;
+        }
+        main {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin: 0 0 24px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            line-height: 1.25;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+        }
+        form {
+            margin: 0;
+        }
+        button {
+            width: 100%;
+            min-height: 80px;
+            padding: 20px 16px;
+            border: 2px solid #ff6666;
+            border-radius: 12px;
+            background-color: #292929;
+            color: #fff;
+            font: inherit;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        button:active {
+            background-color: #5c2020;
+        }
+        button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+        img {
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            margin: 24px auto 0;
+        }
+        [hidden] {
+            display: none !important;
+        }
+        .camera-preview {
+            margin-top: 24px;
+            padding: 16px;
+            border: 1px solid #ff6666;
+            border-radius: 12px;
+        }
+        .camera-preview h2 {
+            margin-top: 0;
+        }
+        .camera-preview img {
+            max-width: 100%;
+            margin: 16px auto;
+        }
+        .camera-preview p {
+            color: #ddd;
+            line-height: 1.5;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+        @media (min-width: 600px) {
+            .controls {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Chuckles the Clown's Fun Page</h1>
+        <div class="controls">
+            <form method="POST" action="{{ url_for('firebutton')  }}">
+                <button type="submit">Fire</button>
+            </form>
+            <form method="POST" action="{{ url_for('smokebutton')  }}">
+                <button type="submit">Smoke</button>
+            </form>
+            <form method="POST" action="{{ url_for('hornbutton')  }}">
+                <button type="submit">Horn</button>
+            </form>
+            <form method="POST" action="{{ url_for('donotpressbutton')  }}">
+                <button type="submit">DO NOT PRESS</button>
+            </form>
+        </div>
+        <section class="camera-preview" id="listening-controls"
+                 aria-labelledby="listening-heading"
+                 data-status-url="{{ url_for('listening_status') }}"
+                 data-mute-url="{{ url_for('set_listening', action='mute') }}"
+                 data-unmute-url="{{ url_for('set_listening', action='unmute') }}">
+            <h2 id="listening-heading">Chuckles's listening</h2>
+            <p id="listening-status" role="status" aria-live="polite">Checking listening status...</p>
+            <button type="button" id="listening-toggle" disabled>Checking...</button>
+            <p>Stops Chuckles's recognition, not the Pi's system microphone.
+                A reply already in progress can finish. No password: use only on a trusted network.</p>
+        </section>
+        <section class="camera-preview" id="camera-preview"
+                 aria-labelledby="camera-heading"
+                 data-status-url="{{ url_for('camera_status') }}"
+                 data-image-url="{{ url_for('camera_image') }}"
+                 data-refresh-url="{{ url_for('camera_refresh') }}">
+            <h2 id="camera-heading">Chuckles's camera</h2>
+            <p>Latest snapshot, not live video. Images expire after 60 seconds.</p>
+            <img id="camera-image" alt="Latest snapshot from Chuckles's webcam" hidden>
+            <p id="camera-status" role="status" aria-live="polite">Checking camera preview...</p>
+            <button type="button" id="camera-refresh">Refresh camera view</button>
+            <p>No password: anyone who can reach this page can view the camera.
+                Use only on a trusted network.</p>
+            <noscript><p>Enable JavaScript to view or refresh the camera snapshot.</p></noscript>
+        </section>
+        <img src="/static/chuckles24.png" alt="Chuckles the Clown">
+    </main>
+    <script src="{{ url_for('static', filename='camera-preview.js') }}" defer></script>
+</body>
+</html>
